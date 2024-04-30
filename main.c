@@ -1,6 +1,14 @@
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+#define ONE_WIRE_BUS 2
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensors(&oneWire);
 #include <TimerOne.h> 
 #include <LiquidCrystal_I2C.h>
+
 LiquidCrystal_I2C lcd(0x27, 16, 2);
+
 const int SW_1 = A0; 
 const int SW_2 = A1; 
 const int SW_3 = A2; 
@@ -22,36 +30,36 @@ int ultra_sense = 0;
 int ultra_count= 0;
 int Final_Distance=0;
 int count_update=0;
-21
+
 int distance_1=0;
-void setup () 
-{
- Serial.begin(9600);
- pinMode(SW_1, INPUT);
- pinMode(SW_2, INPUT);
- pinMode(SW_3, INPUT);
- pinMode(SW_4, INPUT);
- digitalWrite(SW_1, HIGH);
- digitalWrite(SW_2, HIGH);
- digitalWrite(SW_3, HIGH);
- digitalWrite(SW_4, HIGH);
- pinMode(Buzzer, OUTPUT);
- digitalWrite(Buzzer, HIGH);
- sensors.begin();
- lcd.begin();
- lcd.backlight();
- lcd.setCursor(0, 0);
- lcd.print(" Sensor System");
- lcd.setCursor(0, 1);
- lcd.print(" ");
- lcd.clear();
- delay(2000);
- 
- pinMode(trig_1, OUTPUT);
- pinMode(echo_1, INPUT);
- pinMode(IR_Sensor, INPUT);
- digitalWrite(IR_Sensor, HIGH);
+void setup() {
+  Serial.begin(9600);
+  pinMode(SW_1, INPUT);
+  pinMode(SW_2, INPUT);
+  pinMode(SW_3, INPUT);
+  pinMode(SW_4, INPUT);
+  digitalWrite(SW_1, HIGH);
+  digitalWrite(SW_2, HIGH);
+  digitalWrite(SW_3, HIGH);
+  digitalWrite(SW_4, HIGH);
+  pinMode(Buzzer, OUTPUT);
+  digitalWrite(Buzzer, HIGH);
+  sensors.begin();
+  lcd.begin(16, 2); // Provide the number of columns and rows here
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print(" Sensor System");
+  lcd.setCursor(0, 1);
+  lcd.print(" ");
+  lcd.clear();
+  delay(2000);
+
+  pinMode(trig_1, OUTPUT);
+  pinMode(echo_1, INPUT);
+  pinMode(IR_Sensor, INPUT);
+  digitalWrite(IR_Sensor, HIGH);
 }
+
 void loop()
 {
  Read_Switch();
@@ -69,8 +77,7 @@ void Read_Switch()
  Serial.print(SW_2_State);
  Serial.print(SW_3_State);
  Serial.println(SW_4_State);
- 
-22
+
  if(SW_1_State==1 && SW_2_State==0 && SW_3_State==0)System_Mode=1;
  if(SW_1_State==0 && SW_2_State==1 && SW_3_State==0)System_Mode=2;
  if(SW_1_State==0 && SW_2_State==0 && SW_3_State==1)System_Mode=3;
@@ -118,8 +125,7 @@ void LCD_Update()
  {
  lcd.setCursor(15, 1);
  if(Buzzer_Mode==1)lcd.print('B');
-23
- else lcd.print('-');
+else lcd.print('-');
  }
  delay(1000);
 }
@@ -166,6 +172,5 @@ void Temp_Read()
 {
  Serial.println("Sensor...");
  sensors.requestTemperatures();
-24
- Current_Temp=(sensors.getTempCByIndex(0));
+Current_Temp=(sensors.getTempCByIndex(0));
 }
